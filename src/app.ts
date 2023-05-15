@@ -24,19 +24,27 @@ const io = new Server(httpServer, {
   }
 });
 
+let usersAmount = 0;
+
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  usersAmount++;
+  console.log(`User connected    // Total users => ${usersAmount}`);
+
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    usersAmount--;
+    console.log(`User disconnected // Total users => ${usersAmount}`);
   });
+
   socket.on('chat msg', (msg: string) => {
     // This will send the event to all connected clients, including the one that initiated the event.
     io.emit('chat msg', msg);
   });
+
   socket.on('new segment', (lineLength: number, lineSegment: LinesI) => {
     // This will send the event to all clients except for the one that initiated the event
     socket.broadcast.emit('new segment', lineLength, lineSegment);
   });
+
   socket.on('clear board', () => {
     socket.broadcast.emit('clear board');
   });
