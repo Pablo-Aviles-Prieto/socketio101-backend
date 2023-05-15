@@ -25,14 +25,20 @@ const io = new Server(httpServer, {
 });
 
 let usersAmount = 0;
+const users = {};
 
 io.on('connection', (socket) => {
-  usersAmount++;
-  console.log(`User connected    // Total users => ${usersAmount}`);
+  socket.on('register', (username) => {
+    usersAmount++;
+    users[socket.id] = username;
+    console.log(`${username} connected // Total users => ${usersAmount}`);
+  });
 
   socket.on('disconnect', () => {
     usersAmount--;
-    console.log(`User disconnected // Total users => ${usersAmount}`);
+    const username = users[socket.id];
+    console.log(`${username} disconnected // Total users => ${usersAmount}`);
+    delete users[socket.id];
   });
 
   socket.on('chat msg', (msg: string) => {
