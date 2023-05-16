@@ -25,7 +25,7 @@ const io = new Server(httpServer, {
 });
 
 let usersAmount = 0;
-const users = {};
+const users: { [key: string]: string } = {};
 
 io.on('connection', (socket) => {
   socket.on('register', (username) => {
@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 
   socket.on('chat msg', (msg: string) => {
     // This will send the event to all connected clients, including the one that initiated the event.
-    io.emit('chat msg', msg);
+    io.emit('chat msg', { user: users[socket.id], msg });
   });
 
   socket.on('new segment', (lineLength: number, lineSegment: LinesI) => {
